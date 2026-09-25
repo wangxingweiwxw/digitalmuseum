@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>绘本数字博物馆</title>
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="icon" href="./assets/images/logo.jpg">
+</head>
+<body>
+  <div id="view-home">
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <button type="button" class="navbar-logo" id="btn-logo" aria-label="回到首页">
+          <img src="./assets/images/logo.jpg" alt="绘本数字博物馆">
+          <span>绘本数字博物馆</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="main-content">
+      <section class="hero-simple">
+        <div class="hero-simple-inner">
+          <h1>绘本数字博物馆</h1>
+          <p>点开每座馆，画面上的圆点是可以走进的展线。绘本化探索人文历史。</p>
+        </div>
+      </section>
+
+      <section class="container" id="museums">
+        <div class="section-title">
+          <h2>八座博物馆</h2>
+          <p>入口对应 wellplay.cc好玩绘本案例画廊中已发布的探索路径</p>
+          <div class="divider"></div>
+        </div>
+        <div class="museum-grid" id="museum-grid"></div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-bottom">
+          <p>&copy; 2026 绘本数字博物馆</p>
+        </div>
+      </div>
+    </footer>
+    <button type="button" class="back-to-top" id="back-to-top" aria-label="返回顶部">&#8593;</button>
+  </div>
+
+  <div id="view-exhibit" hidden>
+    <header class="exhibit-bar">
+      <button type="button" class="exhibit-home" id="exhibit-home">← 首页</button>
+      <div class="exhibit-titles">
+        <p id="exhibit-museum">绘本数字博物馆</p>
+        <h1 id="exhibit-title">加载中…</h1>
+      </div>
+      <button type="button" id="exhibit-back" class="exhibit-back" hidden>上一页</button>
+    </header>
+    <main class="exhibit-stage" id="exhibit-stage">
+      <div class="exhibit-frame" id="exhibit-frame">
+        <img id="exhibit-image" alt="">
+        <div id="exhibit-beacons" class="exhibit-beacons"></div>
+      </div>
+      <p class="exhibit-hint" id="exhibit-hint">白点是已经点过的展项，点它进入下一页。画面其他位置不会生成新内容。</p>
+    </main>
+    <div class="exhibit-toast" id="exhibit-toast" hidden>此处尚未开放，请点击画面上的圆点</div>
+  </div>
+
+  <script src="./assets/js/museum-data.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>
