@@ -53,19 +53,31 @@
         <p id="exhibit-museum">绘本数字博物馆</p>
         <h1 id="exhibit-title">加载中…</h1>
       </div>
-      <button type="button" id="exhibit-back" class="exhibit-back" hidden>上一页</button>
+      <div class="exhibit-pager">
+        <button type="button" id="exhibit-toc" class="exhibit-back" aria-expanded="false" aria-controls="exhibit-tree-pop">目录</button>
+        <button type="button" id="exhibit-back" class="exhibit-back" hidden>上一页</button>
+        <button type="button" id="exhibit-next" class="exhibit-back">下一页</button>
+      </div>
+      <div id="exhibit-tree-pop" class="exhibit-tree-pop" hidden>
+        <aside id="exhibit-tree" class="story-tree exhibit-tree" aria-label="展线目录"></aside>
+      </div>
     </header>
     <main class="exhibit-stage" id="exhibit-stage">
       <div class="exhibit-frame" id="exhibit-frame">
         <img id="exhibit-image" alt="">
         <div id="exhibit-beacons" class="exhibit-beacons"></div>
       </div>
-      <p class="exhibit-hint" id="exhibit-hint">白点是已经点过的展项，点它进入下一页。画面其他位置不会生成新内容。</p>
+      <p class="exhibit-hint" id="exhibit-hint">向左或向上滑动进入下一页，向右或向下滑动回到上一页。</p>
     </main>
+    <footer class="exhibit-zhihu" id="exhibit-zhihu" hidden aria-label="知乎讨论">
+      <div id="exhibit-zhihu-list"></div>
+    </footer>
     <div class="exhibit-toast" id="exhibit-toast" hidden>此处尚未开放，请点击画面上的圆点</div>
   </div>
 
   <script src="./assets/js/museum-data.js"></script>
+  <script src="./assets/js/story-tree.js"></script>
+  <script src="./assets/js/zhihu-topics.js"></script>
   <script src="./assets/js/app.js"></script>
 </body>
 </html>
