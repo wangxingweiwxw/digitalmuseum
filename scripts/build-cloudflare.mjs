@@ -19,7 +19,7 @@ async function walk(dir) {
   return output.sort();
 }
 
-export async function build(root = ROOT) {
+export async function build(root = ROOT, { refreshImages = false } = {}) {
   root = await fs.realpath(root);
   const dist = path.resolve(root, 'dist');
   if (path.dirname(dist) !== root || path.basename(dist) !== 'dist') throw new Error('Invalid build destination');
@@ -62,10 +62,16 @@ export async function build(root = ROOT) {
   const images = await walk(imageRoot);
   const upload = [];
   let routes = {};
+  const savedIndex = await fs.readFile(path.join(root, 'worker/exhibit-manifest.json'), 'utf8').catch(error => {
+    if (error.code !== 'ENOENT') throw error;
+    return null;
+  });
   for (const file of images) {
     const type = TYPES[path.extname(file).toLowerCase()];
     if (!type) continue;
     if (!file.startsWith(exhibitRoot + path.sep)) { await copy(file); continue; }
+    // CI may still contain some older committed images. The published index is authoritative.
+    if (savedIndex && !refreshImages) continue;
     const data = await fs.readFile(file);
     const hash = createHash('sha256').update(data).digest('hex');
     const source = path.relative(root, file).split(path.sep).join('/');
@@ -76,7 +82,8 @@ export async function build(root = ROOT) {
   }
   if (!upload.length) {
     // GitHub builds use the checked-in index; image binaries live only in R2.
-    routes = JSON.parse(await fs.readFile(path.join(root, 'worker/exhibit-manifest.json'), 'utf8'));
+    if (!savedIndex || refreshImages) throw new Error('No local exhibit images found');
+    routes = JSON.parse(savedIndex);
     for (const [url, entry] of Object.entries(routes)) {
       if (!url.startsWith('/assets/images/exhibits/') || !/^[a-f0-9]{64}$/.test(entry.hash) || !entry.key.startsWith(`exhibits/${entry.hash}.`)) {
         throw new Error(`Invalid exhibit manifest entry: ${url}`);

@@ -26,6 +26,8 @@ test('build excludes repository history, reports and exhibit images', async () =
     await assert.rejects(fs.access(path.join(root, 'dist', forbidden)));
   }
   assert.deepEqual((await build(root)).r2_images, result.r2_images);
+  await fs.writeFile(path.join(root, 'assets/images/exhibits/test/image.png'), 'older committed image');
+  assert.deepEqual((await build(root)).r2_images, result.r2_images, 'CI uses the R2 index even if older images remain in Git');
   await fs.unlink(path.join(root, 'assets/images/exhibits/test/image.png'));
   assert.deepEqual((await build(root)).r2_images, result.r2_images, 'GitHub can build using the R2 index without image binaries');
   await fs.writeFile(path.join(root, 'assets/js/museum-data.js'), 'window.DATA = {"museums":[{"nodes":[{"image":"missing.png"}]}]};');

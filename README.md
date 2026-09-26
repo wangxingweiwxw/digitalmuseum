@@ -6,7 +6,7 @@
 
 Worker 名称：`digitalmuseum`。R2 桶名：`digitalmuseum-exhibits`。
 
-网站代码托管在 GitHub；88 张展品图片从本地上传到 R2，GitHub 只保存 `worker/exhibit-manifest.json` 图片索引。网页资源构建到 `dist/`，不会上传 `.git` 历史包。
+网站代码托管在 GitHub；88 张展品图片从本地上传到 R2，GitHub 构建以 `worker/exhibit-manifest.json` 图片索引为准，无需上传图片。网页资源构建到 `dist/`，不会上传 `.git` 历史包。
 
 Cloudflare Workers Builds 构建命令为 `npm run build`，部署命令为 `npm run deploy`。删除部署命令中的 `--assets .`。首次上线前需要创建 R2 桶并上传图片。
 
@@ -21,4 +21,4 @@ npm run build
 npx wrangler deploy --dry-run
 ```
 
-GitHub 克隆包含网页和图片索引，不含展品原图；如需离线预览或上传图片，请使用包含完整 `assets/images/exhibits/` 的本地项目副本。展品配图为绘本示意，不能作为文物实物照片或精确复原图。
+GitHub 克隆包含网页和图片索引，可能仅有部分旧图片；如需离线预览或上传图片，请使用包含完整 `assets/images/exhibits/` 的本地项目副本。展品配图为绘本示意，不能作为文物实物照片或精确复原图。

@@ -2,7 +2,7 @@
 
 本次报错来自把仓库根目录作为静态资源目录：208 MiB 的 `.git/objects/pack/*.pack` 被上传，超过 Workers 单文件 25 MiB 限制。它是 Git 历史文件，不是网站图片。不要把 `.git` 上传到 R2。
 
-当前配置只发布构建生成的 `dist/`：15 个网页资源约 626 KB；88 张展品图片约 74.8 MB 通过私有 R2 桶提供。页面继续使用原有 `/assets/images/exhibits/...` 地址，Worker 在服务端读取 R2，不需要公开桶、配置图片域名或在前端放密钥。GitHub 不保存展品图片，构建使用已提交的 `worker/exhibit-manifest.json` 索引；本机保留完整图片供上传和离线使用。
+当前配置只发布构建生成的 `dist/`：15 个网页资源约 626 KB；88 张展品图片约 74.8 MB 通过私有 R2 桶提供。页面继续使用原有 `/assets/images/exhibits/...` 地址，Worker 在服务端读取 R2，不需要公开桶、配置图片域名或在前端放密钥。GitHub 构建以已提交的 `worker/exhibit-manifest.json` 索引为准，无需提交图片；即使仓库已有部分旧图片，也不会覆盖索引或进入静态资源包。本机保留完整图片供上传和离线使用。
 
 ## 首次部署
 

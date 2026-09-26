@@ -18,7 +18,7 @@ export function wrangler(args, capture = false) {
 
 export async function upload(mode = '--dry-run') {
   if (!['--dry-run', '--local', '--remote'].includes(mode)) throw new Error('Use --dry-run, --local or --remote');
-  const manifest = await build();
+  const manifest = await build(ROOT, { refreshImages: true });
   const config = JSON.parse(await readFile(path.join(ROOT, 'wrangler.jsonc'), 'utf8'));
   const bucket = config.r2_buckets.find(item => item.binding === 'EXHIBITS')?.bucket_name;
   if (!bucket) throw new Error('Missing EXHIBITS bucket_name in wrangler.jsonc');
