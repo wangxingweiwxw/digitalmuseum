@@ -199,72 +199,37 @@
         if (!box || !listEl || !node) return;
         listEl.textContent = '';
         var items = topics[node.id] || [];
-        var pickedItems = items.filter(function (item) {
-            return safeZhihuUrl(item.url) && item.title;
-        }).slice(0, 2);
-        if (node.introduction) {
-            var intro = document.createElement('p');
-            intro.className = 'exhibit-introduction';
-            intro.textContent = node.introduction;
-            listEl.appendChild(intro);
+        var picked = null;
+        for (var i = 0; i < items.length; i++) {
+            if (safeZhihuUrl(items[i].url) && items[i].title) {
+                picked = items[i];
+                break;
+            }
         }
-        if (node.imageKind === 'illustration') {
-            var note = document.createElement('p');
-            note.className = 'exhibit-art-note';
-            note.textContent = 'AI 绘本示意 · 用于理解展品，细节请参照实物';
-            listEl.appendChild(note);
+        if (!picked) {
+            box.hidden = true;
+            return;
         }
-        var fullImage = document.createElement('a');
-        fullImage.className = 'exhibit-full-image';
-        fullImage.href = node.image;
-        fullImage.target = '_blank';
-        fullImage.rel = 'noopener noreferrer';
-        fullImage.textContent = '查看高清大图 ↗';
-        listEl.appendChild(fullImage);
-        pickedItems.forEach(function (picked) {
-            var line = document.createElement('p');
-            line.className = 'exhibit-zhihu-line';
-            var mark = document.createElement('span');
-            mark.className = 'exhibit-zhihu-mark';
-            mark.textContent = '知乎讨论';
-            var link = document.createElement('a');
-            link.href = safeZhihuUrl(picked.url);
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.textContent = picked.title;
-            line.appendChild(mark);
-            line.appendChild(link);
-            listEl.appendChild(line);
-        });
-        var s = exhibitState;
-        var kids = s && s.childrenOf[node.id] || [];
-        if (kids.length) {
-            var children = document.createElement('div');
-            children.className = 'exhibit-child-links';
-            kids.forEach(function (kid) {
-                var button = document.createElement('button');
-                button.type = 'button';
-                button.textContent = kid.title;
-                button.addEventListener('click', function () { showExhibitNode(kid.id); });
-                children.appendChild(button);
-            });
-            listEl.appendChild(children);
+        var line = document.createElement('p');
+        line.className = 'exhibit-zhihu-line';
+        var mark = document.createElement('span');
+        mark.className = 'exhibit-zhihu-mark';
+        mark.textContent = '知乎';
+        var link = document.createElement('a');
+        link.href = safeZhihuUrl(picked.url);
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = picked.title;
+        line.appendChild(mark);
+        line.appendChild(link);
+        listEl.appendChild(line);
+        if (picked.summary) {
+            var summary = document.createElement('p');
+            summary.className = 'exhibit-zhihu-summary';
+            summary.textContent = picked.summary;
+            listEl.appendChild(summary);
         }
-        box.hidden = !listEl.childElementCount;
-        box.scrollTop = 0;
-    }
-
-    function fitExhibitImage() {
-        var stage = document.getElementById('exhibit-stage');
-        var img = document.getElementById('exhibit-image');
-        var hint = document.getElementById('exhibit-hint');
-        if (!stage || !img || !img.naturalWidth || !exhibitOpen()) return;
-        var style = getComputedStyle(stage);
-        var width = stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-        var height = stage.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom) - hint.offsetHeight - 14;
-        var ratio = Math.min(width / img.naturalWidth, Math.max(1, height) / img.naturalHeight, 1280 / img.naturalWidth);
-        img.style.width = Math.floor(img.naturalWidth * ratio) + 'px';
-        img.style.height = Math.floor(img.naturalHeight * ratio) + 'px';
+        box.hidden = false;
     }
 
     function renderTree(s, node) {
@@ -305,9 +270,6 @@
         titleEl.textContent = node.title;
         imgEl.alt = node.title;
         imgEl.src = node.image;
-        var progress = document.getElementById('exhibit-progress');
-        if (progress) progress.textContent = (s.index === 0 ? '概览' : '展品 ' + s.index + '/' + (s.order.length - 1)) + ' · ' + (s.index + 1) + '/' + s.order.length;
-        viewExhibit.setAttribute('data-node-id', node.id);
         if (backBtn) backBtn.hidden = s.index <= 0;
         if (nextBtn) nextBtn.hidden = s.index >= s.order.length - 1;
         beaconsEl.textContent = '';
@@ -335,11 +297,10 @@
         });
 
         if (hintEl) {
-            hintEl.textContent = '左滑 / 上滑下一页，右滑 / 下滑上一页。' + (kids.some(function (kid) { return kid.click; }) ? '白点、目录可进入展项。' : '目录可跳转展项。');
+            hintEl.textContent = '向左或向上滑动进入下一页，向右或向下滑动回到上一页。白点可进入对应展项。';
         }
         renderTree(s, node);
         renderZhihu(node);
-        requestAnimationFrame(fitExhibitImage);
     }
 
     function exhibitOpen() {
@@ -373,19 +334,7 @@
         var surface = document.getElementById('exhibit-stage');
         if (!surface) return;
         var imgEl = document.getElementById('exhibit-image');
-        if (imgEl) {
-            imgEl.draggable = false;
-            imgEl.addEventListener('load', fitExhibitImage);
-        }
-        window.addEventListener('resize', fitExhibitImage);
-        if (window.ResizeObserver) new ResizeObserver(fitExhibitImage).observe(surface);
-        document.addEventListener('keydown', function (e) {
-            if (!exhibitOpen() || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
-            if (e.key === 'Escape') { setTocOpen(false); return; }
-            if (e.target.closest('#exhibit-tree-pop, #exhibit-zhihu')) return;
-            var delta = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[e.key];
-            if (delta) { e.preventDefault(); goExhibit(delta); }
-        });
+        if (imgEl) imgEl.draggable = false;
 
         var drag = null;
 
@@ -423,7 +372,6 @@
 
         function start(e) {
             if (!exhibitOpen()) return;
-            if (e.isPrimary === false) { cancel(); return; }
             if (e.touches && e.touches.length > 1) {
                 drag = null;
                 return;
@@ -433,29 +381,24 @@
             drag = {
                 x: point(e, 'clientX'),
                 y: point(e, 'clientY'),
-                pointerId: e.pointerId,
                 moved: false
             };
             if (surface.classList) surface.classList.add('is-dragging');
+            if (e.pointerId != null && surface.setPointerCapture) {
+                try { surface.setPointerCapture(e.pointerId); } catch (err) {}
+            }
         }
 
         function move(e) {
             if (!exhibitOpen() || !drag) return;
-            if (drag.pointerId != null && e.pointerId !== drag.pointerId) return;
             var dx = point(e, 'clientX') - drag.x;
             var dy = point(e, 'clientY') - drag.y;
-            if (!drag.moved && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-                drag.moved = true;
-                if (e.pointerId != null && surface.setPointerCapture) {
-                    try { surface.setPointerCapture(e.pointerId); } catch (err) {}
-                }
-            }
+            if (Math.abs(dx) > 8 || Math.abs(dy) > 8) drag.moved = true;
             if (drag.moved && e.cancelable) e.preventDefault();
         }
 
         function end(e) {
             if (!drag) return;
-            if (drag.pointerId != null && e.pointerId !== drag.pointerId) return;
             var dx = point(e, 'clientX') - drag.x;
             var dy = point(e, 'clientY') - drag.y;
             var moved = drag.moved;

@@ -59,7 +59,7 @@
 
         var count = document.createElement('p');
         count.className = 'story-tree-count';
-        count.textContent = '1 页概览 · ' + (museum.nodes.length - 1) + ' 页展品与专题';
+        count.textContent = '(' + museum.nodes.length + ')';
         mount.appendChild(count);
 
         var rootLine = document.createElement('p');
