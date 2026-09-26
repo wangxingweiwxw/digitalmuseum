@@ -1510,18 +1510,24 @@ body.exhibit-page {
 }
 
 .exhibit-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
+    flex-shrink: 0;
     z-index: 20;
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 12px 18px;
-    background: rgba(10, 12, 18, 0.78);
+    background: rgba(10, 12, 18, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+}
+
+.exhibit-pager {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .exhibit-home,
@@ -1540,6 +1546,10 @@ body.exhibit-page {
 .exhibit-home:hover,
 .exhibit-back:hover {
     background: rgba(255, 255, 255, 0.16);
+}
+
+.exhibit-back.is-active {
+    background: rgba(255, 255, 255, 0.22);
 }
 
 .exhibit-titles {
@@ -1562,30 +1572,38 @@ body.exhibit-page {
 }
 
 .exhibit-stage {
-    height: 100dvh;
-    padding: 72px 16px 56px;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    padding: 8px 16px 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    touch-action: pan-y;
 }
 
 .exhibit-frame {
     position: relative;
     display: inline-block;
     max-width: 100%;
-    max-height: calc(100dvh - 140px);
     line-height: 0;
+    touch-action: none;
+    cursor: grab;
 }
 
 .exhibit-frame img {
     display: block;
-    max-width: min(100vw - 32px, 1280px);
-    max-height: calc(100dvh - 140px);
     width: auto;
+    max-width: min(100vw - 32px, 1280px);
+    max-height: calc(100dvh - 168px);
     height: auto;
     border-radius: 8px;
     box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .exhibit-beacons {
@@ -1624,12 +1642,12 @@ body.exhibit-page {
 }
 
 .exhibit-hint {
-    margin-top: 14px;
-    font-size: 0.82rem;
-    opacity: 0.62;
+    margin-top: 10px;
+    font-size: 0.78rem;
+    opacity: 0.48;
     text-align: center;
-    max-width: 520px;
-    line-height: 1.6;
+    max-width: 640px;
+    line-height: 1.45;
 }
 
 .exhibit-toast {
@@ -1643,7 +1661,10 @@ body.exhibit-page {
     padding: 10px 16px;
     border-radius: 999px;
     font-size: 0.86rem;
-    white-space: nowrap;
+    white-space: normal;
+    max-width: min(92vw, 440px);
+    text-align: center;
+    line-height: 1.5;
 }
 
 @media (max-width: 968px) {
@@ -1715,7 +1736,178 @@ button.museum-card:active {
 
 body.is-exhibit {
     background: #111318;
+    color: #f4f1ea;
     overflow: hidden;
+    height: 100dvh;
+}
+
+#view-exhibit:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    min-height: 0;
+}
+
+.exhibit-stage.is-dragging,
+.exhibit-stage.is-dragging .exhibit-frame {
+    cursor: grabbing;
+}
+
+.exhibit-tree-pop {
+    position: absolute;
+    top: calc(100% - 6px);
+    right: 16px;
+    z-index: 30;
+    width: min(440px, calc(100vw - 24px));
+    max-height: min(68dvh, 520px);
+    overflow: auto;
+}
+
+.exhibit-tree-pop[hidden] {
+    display: none;
+}
+
+.story-tree {
+    background: var(--color-ivory);
+    color: var(--color-dark);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    padding: 16px 16px 18px;
+}
+
+.story-tree-count {
+    color: var(--color-gray);
+    font-size: 0.86rem;
+    margin-bottom: 8px;
+}
+
+.story-tree-root {
+    margin-bottom: 10px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.55;
+}
+
+.story-tree-root a,
+.story-tree-row a {
+    color: var(--color-dark);
+    text-decoration: none;
+}
+
+.story-tree-root a:hover,
+.story-tree-row a:hover {
+    color: var(--color-vermilion-dark);
+    text-decoration: underline;
+}
+
+.story-tree-root a.is-current,
+.story-tree-row a.is-current {
+    color: var(--color-vermilion);
+    font-weight: 700;
+}
+
+.story-tree-body {
+    font-family: "Cascadia Mono", "Sarasa Mono SC", "Microsoft YaHei Mono", Consolas, monospace;
+    font-size: 0.84rem;
+    line-height: 1.75;
+    color: var(--color-dark);
+}
+
+.story-tree-row {
+    display: flex;
+    align-items: flex-start;
+    white-space: pre;
+}
+
+.story-tree-branch {
+    flex: 0 0 auto;
+    color: var(--color-gray);
+}
+
+.story-tree-row a {
+    white-space: normal;
+}
+
+.exhibit-zhihu {
+    flex-shrink: 0;
+    width: 100%;
+    margin: 0;
+    padding: 6px 22px calc(8px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
+    background: rgba(10, 12, 18, 0.96);
+    color: rgba(244, 241, 234, 0.72);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    text-align: center;
+}
+
+.exhibit-zhihu[hidden] {
+    display: none;
+}
+
+.exhibit-zhihu-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.exhibit-zhihu-mark {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: rgba(212, 168, 65, 0.85);
+}
+
+.exhibit-zhihu-line a {
+    min-width: 0;
+    color: rgba(244, 241, 234, 0.88);
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.exhibit-zhihu-line a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.exhibit-zhihu-summary {
+    margin: 2px auto 0;
+    max-width: 860px;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: rgba(244, 241, 234, 0.46);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 800px) {
+    .exhibit-bar {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+    }
+
+    .exhibit-pager {
+        width: 100%;
+    }
+
+    .exhibit-frame img {
+        max-height: calc(100dvh - 196px);
+    }
+
+    .exhibit-tree-pop {
+        left: 12px;
+        right: 12px;
+        width: auto;
+    }
 }
 
 .exhibit-bar {
@@ -1723,5 +1915,5 @@ body.is-exhibit {
 }
 
 .exhibit-stage {
-    padding-bottom: calc(56px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
+    padding-bottom: 4px;
 }
