@@ -1,0 +1,21 @@
+# Defense for accidental --assets . deployments. The supported directory is dist.
+.git
+.git/**
+.github/**
+node_modules/**
+.wrangler/**
+.cloudflare/**
+reports/**
+scripts/**
+tests/**
+worker/**
+assets/images/exhibits/**
+dist/**
+*.zip
+*.log
+.env*
+.dev.vars*
+package*.json
+wrangler.*
+README.md
+CLOUDFLARE.md

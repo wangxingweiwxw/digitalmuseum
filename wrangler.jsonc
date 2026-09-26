@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "digitalmuseum",
+  "main": "worker/index.mjs",
+  "compatibility_date": "2026-09-26",
+  "build": { "command": "node scripts/build-cloudflare.mjs" },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "none"
+  },
+  "r2_buckets": [
+    { "binding": "EXHIBITS", "bucket_name": "digitalmuseum-exhibits" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "picturebook-museum",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build-cloudflare.mjs",
+    "test": "node --test tests/cloudflare.test.mjs",
+    "dev": "wrangler dev",
+    "r2:plan": "node scripts/upload-r2.mjs --dry-run",
+    "r2:upload": "node scripts/upload-r2.mjs",
+    "deploy": "wrangler deploy",
+    "deploy:r2": "node scripts/deploy-r2.mjs"
+  },
+  "devDependencies": { "wrangler": "4.141.0" }
+}
