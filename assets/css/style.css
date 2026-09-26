@@ -1917,3 +1917,29 @@ body.is-exhibit {
 .exhibit-stage {
     padding-bottom: 4px;
 }
+
+/* The illustration and its hotspots always share the same fitted rectangle. */
+.exhibit-stage { touch-action: none; }
+.exhibit-frame { flex: 0 0 auto; }
+.exhibit-frame img { max-height: none; max-width: 100%; }
+.exhibit-progress { align-self: center; color: #c9b990; font-size: .76rem; white-space: nowrap; }
+.exhibit-zhihu { max-height: 27dvh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
+.exhibit-introduction { max-width: 960px; margin: 3px auto 6px; color: #e0dace; font-size: .86rem; line-height: 1.7; text-align: left; }
+.exhibit-art-note { color: #b4a98e; font-size: .69rem; margin-bottom: 5px; }
+.exhibit-full-image { display: inline-block; color: #d4bd90; font-size: .75rem; padding: 3px 10px; text-decoration: underline; text-underline-offset: 3px; }
+.exhibit-zhihu-line { margin: 4px auto; max-width: 960px; }
+.exhibit-zhihu-line a { white-space: normal; text-align: left; }
+.exhibit-child-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin: 9px auto 2px; max-width: 1100px; }
+.exhibit-child-links button { border: 1px solid #655743; border-radius: 8px; padding: 6px 10px; background: #25221e; color: #eedcc0; font: inherit; font-size: .78rem; cursor: pointer; }
+.exhibit-child-links button:hover { background: #423628; }
+.story-tree-row a { padding: 4px 0; }
+@media (max-width: 800px) {
+    .exhibit-progress { margin-right: auto; }
+    .exhibit-zhihu { padding-left: 16px; padding-right: 16px; max-height: 30dvh; }
+    .exhibit-introduction { font-size: .8rem; }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+    .exhibit-bar { flex-wrap: nowrap; padding: 5px 12px; }
+    .exhibit-pager { width: auto; }
+    .exhibit-zhihu { max-height: 25dvh; }
+}

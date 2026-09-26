@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.wrangler/
+.cloudflare/
+assets/images/exhibits/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+*.zip
+*.log
