@@ -2,7 +2,7 @@
 
 本次报错来自把仓库根目录作为静态资源目录：208 MiB 的 `.git/objects/pack/*.pack` 被上传，超过 Workers 单文件 25 MiB 限制。它是 Git 历史文件，不是网站图片。不要把 `.git` 上传到 R2。
 
-当前配置只发布构建生成的 `dist/`：15 个网页资源约 626 KB；88 张展品图片约 74.8 MB 通过私有 R2 桶提供。页面继续使用原有 `/assets/images/exhibits/...` 地址，Worker 在服务端读取 R2，不需要公开桶、配置图片域名或在前端放密钥。GitHub 构建以已提交的 `worker/exhibit-manifest.json` 索引为准，无需提交图片；即使仓库已有部分旧图片，也不会覆盖索引或进入静态资源包。本机保留完整图片供上传和离线使用。
+当前配置只发布构建生成的 `dist/`：17 个网页资源约 633 KB；88 张展品图片约 74.8 MB 通过私有 R2 桶提供。页面继续使用原有 `/assets/images/exhibits/...` 地址，Worker 在服务端读取 R2，不需要公开桶、配置图片域名或在前端放密钥。GitHub 构建以已提交的 `worker/exhibit-manifest.json` 索引为准，无需提交图片；即使仓库已有部分旧图片，也不会覆盖索引或进入静态资源包。本机保留完整图片供上传和离线使用。
 
 ## 首次部署
 
@@ -53,7 +53,7 @@ npm run dev
 
 本地上传仅写入本地模拟 R2，不会修改线上桶。只运行 `npm run r2:upload` 默认展示计划，不执行上传；远程上传需传 `--remote`。
 
-预览启动后，在另一个终端运行 `node scripts/verify-cloudflare.mjs http://127.0.0.1:8787`，可检查 15 个网页资源、88 张图片的实际 HTTP 返回值与 SHA-256，并检查 HEAD、304 和私有文件路径的 404 响应。验证结果写入 `reports/cloudflare-verification.json`。也可以把参数改为已部署的 HTTPS 网址，验证线上版本。
+预览启动后，在另一个终端运行 `node scripts/verify-cloudflare.mjs http://127.0.0.1:8787`，可检查 17 个网页资源、88 张图片的实际 HTTP 返回值与 SHA-256，并检查 HEAD、304 和私有文件路径的 404 响应。验证结果写入 `reports/cloudflare-verification.json`。也可以把参数改为已部署的 HTTPS 网址，验证线上版本。
 
 构建只复制白名单网站文件，并在复制时检查 25 MiB 上限；`.git`、报告、压缩包和展品图片均不进入静态资源目录。根目录 `.assetsignore` 是额外防护，正确的 `./dist` 配置仍是必要条件。构建统计和上传清单可在本地 `.cloudflare/build-manifest.json` 查看。
 

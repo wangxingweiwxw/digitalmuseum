@@ -1,0 +1,2 @@
+# Copy to .dev.vars for local tests. Never commit the real App Key.
+ZHIHU_OAUTH_APP_KEY=replace-with-your-app-key

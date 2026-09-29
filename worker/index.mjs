@@ -1,4 +1,6 @@
 import exhibits from './exhibit-manifest.json' with { type: 'json' };
+import { handleAuth } from './auth.mjs';
+export { MuseumAuthSession } from './auth.mjs';
 
 function notModified(request, headers) {
   const match = request.headers.get('if-none-match');
@@ -17,6 +19,8 @@ function clientResponse(request, body, headers) {
 
 export default {
   async fetch(request, env, ctx) {
+    const auth = await handleAuth(request, env);
+    if (auth) return auth;
     const url = new URL(request.url);
     let pathname;
     try { pathname = decodeURIComponent(url.pathname); }

@@ -6,6 +6,7 @@
   <title>绘本数字博物馆</title>
   <link rel="stylesheet" href="./assets/css/style.css?v=20260926-expanded">
   <link rel="icon" href="./assets/images/logo.jpg">
+  <link rel="stylesheet" href="./assets/css/auth.css?v=20260929">
 </head>
 <body>
   <div id="view-home">
@@ -15,6 +16,10 @@
           <img src="./assets/images/logo.jpg" alt="绘本数字博物馆">
           <span>绘本数字博物馆</span>
         </button>
+        <div class="zhihu-auth-nav">
+          <button type="button" class="zhihu-auth-button" id="zhihu-login">知乎登录</button>
+          <button type="button" class="zhihu-auth-button" id="zhihu-account" hidden></button>
+        </div>
       </div>
     </nav>
 
@@ -76,6 +81,23 @@
     <div class="exhibit-toast" id="exhibit-toast" hidden>此处尚未开放，请点击画面上的圆点</div>
   </div>
 
+  <dialog id="zhihu-auth-dialog" class="zhihu-auth-dialog" aria-labelledby="zhihu-auth-title">
+    <button type="button" id="zhihu-auth-close" class="zhihu-auth-close" aria-label="关闭">×</button>
+    <h2 id="zhihu-auth-title">使用知乎登录</h2>
+    <div id="zhihu-auth-intro">
+      <p>登录后显示你的知乎昵称与头像。你也可以不登录，直接浏览全部展馆。</p>
+      <p>将前往知乎确认授权。本应用已申请邮箱、手机和公开内容权限，实际授权以知乎页面为准；本网站仅使用基本资料建立登录状态，邮箱和手机仅保留脱敏值，不读取你的创作内容。</p>
+    </div>
+    <div id="zhihu-profile" hidden>
+      <img id="zhihu-avatar" alt="知乎头像" referrerpolicy="no-referrer" hidden>
+      <p id="zhihu-name"></p><p id="zhihu-headline"></p><p id="zhihu-contact"></p>
+      <p>退出仅结束本网站的登录会话。</p>
+    </div>
+    <p id="zhihu-auth-status" role="status" aria-live="polite"></p>
+    <button type="button" id="zhihu-authorize" class="zhihu-auth-button">前往知乎授权</button>
+    <button type="button" id="zhihu-logout" class="zhihu-auth-button" hidden>退出登录</button>
+  </dialog>
+  <script src="./assets/js/auth.js?v=20260929"></script>
   <script src="./assets/js/museum-data.js?v=20260926-expanded"></script>
   <script src="./assets/js/story-tree.js?v=20260926-expanded"></script>
   <script src="./assets/js/zhihu-topics.js?v=20260926-expanded"></script>

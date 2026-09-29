@@ -7,8 +7,15 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
+    "run_worker_first": ["/api/auth/*", "/zhihu-callback"],
     "not_found_handling": "none"
   },
+  "vars": {
+    "ZHIHU_OAUTH_APP_ID": "851",
+    "ZHIHU_OAUTH_REDIRECT_URI": "https://museum.chipai.cc/zhihu-callback"
+  },
+  "durable_objects": { "bindings": [{ "name": "AUTH_SESSIONS", "class_name": "MuseumAuthSession" }] },
+  "migrations": [{ "tag": "v1-auth", "new_sqlite_classes": ["MuseumAuthSession"] }],
   "r2_buckets": [
     { "binding": "EXHIBITS", "bucket_name": "digitalmuseum-exhibits" }
   ]

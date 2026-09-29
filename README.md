@@ -22,3 +22,9 @@ npx wrangler deploy --dry-run
 ```
 
 GitHub 克隆包含网页和图片索引，可能仅有部分旧图片；如需离线预览或上传图片，请使用包含完整 `assets/images/exhibits/` 的本地项目副本。展品配图为绘本示意，不能作为文物实物照片或精确复原图。
+
+## 知乎登录
+
+已实现知乎登录入口、服务端授权回调、账号展示和退出；回调为 `https://museum.chipai.cc/zhihu-callback`，App ID 为 `851`。App Key 使用 Cloudflare Secret，会话使用 SQLite Durable Objects。
+
+配置和上线验收见 [知乎 OAuth 接入说明](ZHIHU-OAUTH.md)。本地测试使用模拟授权，真实知乎登录仍需上线联调，并确认平台回传 `state`；缺少该参数的回调会被拒绝。
