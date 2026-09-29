@@ -19,3 +19,4 @@ package*.json
 wrangler.*
 README.md
 CLOUDFLARE.md
+ZHIHU-OAUTH.md

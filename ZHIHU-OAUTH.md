@@ -25,6 +25,8 @@
 
 ## 协议限制与验收边界
 
+2026-09-29：用户已确认平台为 App 851 支持 `state` 回传。代码继续严格校验，真实用户授权仍需在发布后验收。Cloudflare App Key Secret 已成功配置；日志配置隐藏查询参数，避免记录授权码。
+
 官方 Skill 的 `references/oauth.md` 记录历史回调不返回 `state`，并要求上线前确认该能力。本实现发送随机 `state` 并严格验证：缺少 state、Cookie 不匹配、过期、重复回调均拒绝，且不会调用 token 接口。没有“忽略 state”开关。如果真实回调仍不返回 state，请知乎开放平台确认并开启回传支持，再完成上线验收；不要通过关闭校验绕过。
 
 回调接受 `authorization_code` 和兼容的 `code`；token 表单仍使用 `code`。可识别 `code: 20000` 成功响应及 data 包装。scope/PKCE/refresh token 未在当前资料定义，代码不编造参数或自动刷新流程。

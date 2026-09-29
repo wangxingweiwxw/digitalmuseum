@@ -1,8 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "digitalmuseum",
+  "account_id": "8106635581af5c001f156a589fea132c",
+  "routes": [{ "pattern": "museum.chipai.cc", "custom_domain": true }],
   "main": "worker/index.mjs",
   "compatibility_date": "2026-09-26",
+  "observability": { "enabled": true, "redact_query_string": true },
   "build": { "command": "node scripts/build-cloudflare.mjs" },
   "assets": {
     "directory": "./dist",
