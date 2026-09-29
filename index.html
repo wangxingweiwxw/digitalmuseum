@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>绘本数字博物馆</title>
-  <link rel="stylesheet" href="./assets/css/style.css?v=20260926-expanded">
+  <link rel="stylesheet" href="./assets/css/style.css?v=20260929-transitions">
   <link rel="icon" href="./assets/images/logo.jpg">
   <link rel="stylesheet" href="./assets/css/auth.css?v=20260929">
 </head>
@@ -73,6 +73,14 @@
         <img id="exhibit-image" alt="">
         <div id="exhibit-beacons" class="exhibit-beacons"></div>
       </div>
+      <div class="exhibit-loading" id="exhibit-loading" hidden>
+        <span class="exhibit-loading-spinner" aria-hidden="true"></span>
+        <div role="status" aria-live="polite" aria-atomic="true">
+          <p id="exhibit-loading-text"></p>
+          <p class="exhibit-loading-detail" id="exhibit-loading-detail"></p>
+        </div>
+        <button type="button" id="exhibit-retry" class="exhibit-back" hidden>重新载入</button>
+      </div>
       <p class="exhibit-hint" id="exhibit-hint">向左或向上滑动进入下一页，向右或向下滑动回到上一页。</p>
     </main>
     <footer class="exhibit-zhihu" id="exhibit-zhihu" hidden aria-label="展品简介与延伸阅读" tabindex="0">
@@ -101,6 +109,6 @@
   <script src="./assets/js/museum-data.js?v=20260926-expanded"></script>
   <script src="./assets/js/story-tree.js?v=20260926-expanded"></script>
   <script src="./assets/js/zhihu-topics.js?v=20260926-expanded"></script>
-  <script src="./assets/js/app.js?v=20260926-expanded"></script>
+  <script src="./assets/js/app.js?v=20260929-transitions"></script>
 </body>
 </html>
