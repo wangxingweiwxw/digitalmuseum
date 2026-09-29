@@ -138,24 +138,36 @@ export async function handleAuth(request, env, dependencies = {}) {
       if (url.searchParams.has('error')) return redirect('/?auth_error=denied', [clearFlow]);
       const code = url.searchParams.get('authorization_code') || url.searchParams.get('code');
       if (!code || code.length > 4096 || url.searchParams.getAll('authorization_code').length > 1 || url.searchParams.getAll('code').length > 1) return redirect('/?auth_error=code_missing', [clearFlow]);
+      let stage = 'token_request', upstreamStatus = null;
       try {
         const tokenResponse = await fetcher(TOKEN, { method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(12000), headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' }, body: new URLSearchParams({ app_id: String(env.ZHIHU_OAUTH_APP_ID), app_key: env.ZHIHU_OAUTH_APP_KEY, grant_type: 'authorization_code', redirect_uri: cfg.callback, code }) });
+        upstreamStatus = tokenResponse.status;
+        stage = 'token_response';
         if (!tokenResponse.ok) throw new Error('Token exchange failed');
         const token = payload(parseProviderJSON(await tokenResponse.text()));
         if (typeof token.access_token !== 'string' || !token.access_token || !Number.isFinite(Number(token.expires_in)) || Number(token.expires_in) <= 0) throw new Error('Invalid token response');
         const tokenExpiresAt = Date.now() + Number(token.expires_in) * 1000;
+        stage = 'profile_request';
+        upstreamStatus = null;
         const userResponse = await fetcher(USER, { redirect: 'manual', signal: AbortSignal.timeout(12000), headers: { Authorization: 'Bearer ' + token.access_token, Accept: 'application/json' } });
+        upstreamStatus = userResponse.status;
+        stage = 'profile_response';
         if (!userResponse.ok) throw new Error('User request failed');
         const user = publicProfile(payload(parseProviderJSON(await userResponse.text())));
         const seconds = Math.min(Math.floor((tokenExpiresAt - Date.now()) / 1000), 86400);
         if (seconds < 1) throw new Error('Token expired during login');
         const sid = random();
+        stage = 'session_store';
         // Login needs only a profile. Discard the provider token and raw email/phone after this request.
         await db.put('session:' + await digest(sid), { user }, Date.now() + seconds * 1000);
         const old = readCookie(request, SESSION_COOKIE);
         if (old) await db.delete('session:' + await digest(old));
         return redirect(pending.returnTo, [clearFlow, cookie(SESSION_COOKIE, sid, seconds)]);
-      } catch { return redirect('/?auth_error=provider_failed', [clearFlow]); }
+      } catch {
+        // Only fixed stage names and HTTP status: never log codes, tokens, headers or provider bodies.
+        console.warn('zhihu_oauth_failed', { stage, upstreamStatus });
+        return redirect('/?auth_error=provider_failed', [clearFlow]);
+      }
     }
     const sid = readCookie(request, SESSION_COOKIE);
     const key = sid ? 'session:' + await digest(sid) : null;
@@ -175,4 +187,3 @@ export async function handleAuth(request, env, dependencies = {}) {
     return json({ error: 'temporarily_unavailable' }, 503);
   }
 }
-
