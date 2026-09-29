@@ -13,13 +13,15 @@
 
 ## 发布步骤
 
-当前 OAuth 修改建立在 Workers + R2 代码上。发布前核实原 R2 桶和全部 88 张图片已就绪，详见 `CLOUDFLARE.md`；本地预检通过不代表此前 R2 草稿已上线。
+当前 OAuth 修改建立在 Workers + R2 代码上。2026-09-29 已创建 `digitalmuseum-exhibits` 并上传全部 88 张图片，登录代码已部署到 `museum.chipai.cc`。迁移到其他账户或新环境时，仍需先准备图片，详见 `CLOUDFLARE.md`。
 
 1. 登录正确的 Cloudflare 账户，确认 Worker `digitalmuseum` 已绑定 `museum.chipai.cc`。
 2. 在该 Worker 的 **Settings → Variables and Secrets** 添加 Secret `ZHIHU_OAUTH_APP_KEY`，值使用邮件中的 App Key。本机已保存 `.dev.vars` 时，登录 Cloudflare 后运行 `node scripts/configure-zhihu-secret.mjs`，脚本通过标准输入上传密钥，不会把密钥放进命令行参数。也可以执行 `node node_modules/wrangler/bin/wrangler.js secret put ZHIHU_OAUTH_APP_KEY`，在提示中输入。
 3. 提交代码，运行 `npm test`、`npm run build`、`npx wrangler deploy --dry-run`。部署使用 `npm run deploy`。`wrangler.jsonc` 会增加 `AUTH_SESSIONS` 绑定及首次 SQLite Durable Object 迁移；已有迁移标签必须保留。
 4. Workers Builds 的构建命令使用 `npm run build`、部署命令使用 `npm run deploy`，移除 `--assets .`。生产 App Key 配置为运行时 Secret，不作为前端构建变量。
 5. 从 `https://museum.chipai.cc` 点“知乎登录”，由用户本人完成知乎登录及授权；确认昵称、退出、会话过期、取消授权和手机页面表现。
+
+配置已声明 `secrets.required` 并启用 `keep_vars`：发布前检查必需密钥，同时保留线上配置。不要移除这两项。曾在首次从纯静态 Worker 切换时遇到密钥未保留，已补回并验证再次发布后仍存在。
 
 只有登记域名可以完成登录。AI Works 若以第三方 iframe 展示本站，跨站 Cookie 限制可能影响会话；请在新标签页打开 `https://museum.chipai.cc` 完成登录，不将 Cookie 改为不安全的跨站默认值。
 

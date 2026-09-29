@@ -6,7 +6,7 @@
 
 ## 首次部署
 
-需要 Node.js 22 或更高版本、已启用 R2 的 Cloudflare 账户。这里的配置和脚本已经准备好，尚未创建远程桶或发布 Worker。
+需要 Node.js 22 或更高版本、已启用 R2 的 Cloudflare 账户。2026-09-29 已创建本项目的 `digitalmuseum-exhibits` 桶、上传 88 张图片，并发布到 `museum.chipai.cc`。以下首次部署流程用于新环境；已有桶无需重复创建。知乎登录还需按 `ZHIHU-OAUTH.md` 配置运行时 Secret。
 
 1. `wrangler.jsonc` 已对应 GitHub 仓库 `wangxingweiwxw/digitalmuseum`：Worker 名称为 `digitalmuseum`；R2 桶名为 `digitalmuseum-exhibits`。如果使用已有的其他桶，请修改 `r2_buckets[0].bucket_name`。
 2. 在项目根目录运行：
