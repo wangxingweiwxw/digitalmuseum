@@ -14,6 +14,114 @@
     var exhibitState = null;
     var suppressClick = false;
     var suppressClickTimer = null;
+    var imageRequest = 0;
+    var imageCache = new Map();
+    var imageSlowTimer = null;
+
+    // Decode off screen; only the latest navigation may replace the visible image.
+    function loadImage(url, priority, retry) {
+        if (retry) imageCache.delete(url);
+        var cached = imageCache.get(url);
+        if (cached) {
+            if (priority === 'high') cached.image.fetchPriority = 'high';
+            imageCache.delete(url);
+            imageCache.set(url, cached);
+            return cached;
+        }
+        var image = new Image();
+        image.decoding = 'async';
+        image.fetchPriority = priority;
+        var entry = { image: image, ready: false };
+        entry.promise = new Promise(function (resolve, reject) {
+            var settled = false;
+            var timer = setTimeout(function () { finish(new Error('timeout')); }, 25000);
+            function finish(error) {
+                if (settled) return;
+                settled = true;
+                clearTimeout(timer);
+                image.onload = image.onerror = null;
+                if (error) {
+                    if (imageCache.get(url) === entry) imageCache.delete(url);
+                    reject(error);
+                } else {
+                    entry.ready = true;
+                    resolve(image);
+                }
+            }
+            image.onerror = function () { finish(new Error('image unavailable')); };
+            image.onload = function () {
+                if (image.decode) image.decode().then(function () { finish(); }, finish);
+                else finish();
+            };
+            image.src = retry ? url + (url.indexOf('?') < 0 ? '?' : '&') + 'retry=' + Date.now() : url;
+        });
+        imageCache.set(url, entry);
+        // Bound retained decoded images; the browser still manages its normal HTTP cache.
+        while (imageCache.size > 5) imageCache.delete(imageCache.keys().next().value);
+        return entry;
+    }
+
+    function preloadNeighbors(s) {
+        var connection = navigator.connection;
+        if (connection && (connection.saveData || /(^|-)2g$/.test(connection.effectiveType))) return;
+        [1, -1].forEach(function (delta) {
+            var node = s.byId[s.order[s.index + delta]];
+            if (node) loadImage(node.image, 'low', false).promise.catch(function () {});
+        });
+    }
+
+    function loadExhibitImage(s, node, retry) {
+        var request = ++imageRequest;
+        clearTimeout(imageSlowTimer);
+        var stage = document.getElementById('exhibit-stage');
+        var frame = document.getElementById('exhibit-frame');
+        var status = document.getElementById('exhibit-loading');
+        var label = document.getElementById('exhibit-loading-text');
+        var detail = document.getElementById('exhibit-loading-detail');
+        var retryButton = document.getElementById('exhibit-retry');
+        var old = document.getElementById('exhibit-image');
+        var entry = loadImage(node.image, 'high', retry);
+        stage.classList.remove('has-image-error');
+        stage.classList.add('is-image-loading');
+        frame.classList.toggle('is-empty', !old.naturalWidth);
+        frame.setAttribute('aria-busy', 'true');
+        old.setAttribute('aria-hidden', 'true');
+        document.getElementById('exhibit-beacons').inert = true;
+        retryButton.hidden = true;
+        label.textContent = '正在打开 · ' + node.title;
+        detail.textContent = '画面就绪后会自动呈现';
+        // Cached pages reveal immediately without flashing a loading card.
+        status.hidden = entry.ready;
+        imageSlowTimer = setTimeout(function () {
+            detail.textContent = '网络有些慢，仍在加载。也可以继续翻页';
+        }, 4000);
+        entry.promise.then(function (image) {
+            if (request !== imageRequest || exhibitState !== s) return;
+            clearTimeout(imageSlowTimer);
+            image.id = 'exhibit-image';
+            image.alt = node.title;
+            image.draggable = false;
+            image.removeAttribute('aria-hidden');
+            image.className = 'is-revealing';
+            old.replaceWith(image);
+            frame.classList.remove('is-empty');
+            stage.classList.remove('is-image-loading');
+            frame.setAttribute('aria-busy', 'false');
+            status.hidden = true;
+            document.getElementById('exhibit-beacons').inert = false;
+            fitExhibitImage();
+            preloadNeighbors(s);
+        }).catch(function () {
+            if (request !== imageRequest || exhibitState !== s) return;
+            clearTimeout(imageSlowTimer);
+            stage.classList.add('has-image-error');
+            frame.setAttribute('aria-busy', 'false');
+            status.hidden = false;
+            label.textContent = '这张画面暂时未能载入';
+            detail.textContent = node.title + ' · 请重试，或继续浏览其他页面';
+            retryButton.hidden = false;
+        });
+    }
 
     function toast(msg) {
         if (!toastEl) return;
@@ -36,6 +144,8 @@
     }
 
     function showHome() {
+        ++imageRequest;
+        clearTimeout(imageSlowTimer);
         document.body.classList.remove('is-exhibit');
         viewHome.hidden = false;
         viewExhibit.hidden = true;
@@ -293,7 +403,6 @@
         if (!s) return;
         var museumEl = document.getElementById('exhibit-museum');
         var titleEl = document.getElementById('exhibit-title');
-        var imgEl = document.getElementById('exhibit-image');
         var beaconsEl = document.getElementById('exhibit-beacons');
         var backBtn = document.getElementById('exhibit-back');
         var nextBtn = document.getElementById('exhibit-next');
@@ -303,8 +412,6 @@
 
         museumEl.textContent = s.museum.name;
         titleEl.textContent = node.title;
-        imgEl.alt = node.title;
-        imgEl.src = node.image;
         var progress = document.getElementById('exhibit-progress');
         if (progress) progress.textContent = (s.index === 0 ? '概览' : '展品 ' + s.index + '/' + (s.order.length - 1)) + ' · ' + (s.index + 1) + '/' + s.order.length;
         viewExhibit.setAttribute('data-node-id', node.id);
@@ -339,6 +446,7 @@
         }
         renderTree(s, node);
         renderZhihu(node);
+        loadExhibitImage(s, node, false);
         requestAnimationFrame(fitExhibitImage);
     }
 
@@ -347,6 +455,10 @@
     }
 
     function initExhibitControls() {
+        document.getElementById('exhibit-retry').addEventListener('click', function () {
+            var s = exhibitState;
+            if (s) loadExhibitImage(s, s.byId[currentId(s)], true);
+        });
         document.getElementById('exhibit-home').addEventListener('click', showHome);
         document.getElementById('btn-logo').addEventListener('click', showHome);
         document.getElementById('exhibit-toc').addEventListener('click', function () {
@@ -410,7 +522,8 @@
         }
 
         function ignoreStart(el) {
-            return hasClassWalk(el, 'exhibit-tree', surface)
+            return hasClassWalk(el, 'exhibit-loading', surface)
+                || hasClassWalk(el, 'exhibit-tree', surface)
                 || hasClassWalk(el, 'exhibit-tree-pop', surface)
                 || hasClassWalk(el, 'story-tree', surface)
                 || hasClassWalk(el, 'exhibit-zhihu', surface)
