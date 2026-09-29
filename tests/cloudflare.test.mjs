@@ -14,14 +14,15 @@ test('build excludes repository history, reports and exhibit images', async () =
   await fs.writeFile(path.join(root, 'assets/css/style.css'), 'body{}');
   await fs.writeFile(path.join(root, 'assets/images/cover.png'), 'cover');
   await fs.writeFile(path.join(root, 'assets/images/exhibits/test/image.png'), 'exhibit');
-  await fs.writeFile(path.join(root, 'assets/js/museum-data.js'), 'window.DATA = ' + JSON.stringify({ museums: [{ nodes: [{ image: 'assets/images/exhibits/test/image.png' }] }] }) + ';');
+  await fs.writeFile(path.join(root, 'assets/js/museum-data.js'), 'window.DATA = ' + JSON.stringify({ museums: [{ nodes: [{ id: 'test', image: 'assets/images/exhibits/test/image.png' }] }] }) + ';');
+  await fs.writeFile(path.join(root, 'assets/js/zhihu-topics.js'), 'window.ZHIHU_TOPICS = {"test":[{"title":"Museum","url":"https://zhuanlan.zhihu.com/p/123"}]};');
   const pack = await fs.open(path.join(root, '.git/objects/pack/history.pack'), 'w');
   await pack.truncate(208 * 1024 * 1024);
   await pack.close();
   await fs.writeFile(path.join(root, 'reports/private.txt'), 'not public');
   const result = await build(root);
   assert.equal(result.r2_images.length, 1);
-  assert.equal(result.static_files.length, 4);
+  assert.equal(result.static_files.length, 5);
   for (const forbidden of ['.git', 'reports', 'assets/images/exhibits']) {
     await assert.rejects(fs.access(path.join(root, 'dist', forbidden)));
   }
