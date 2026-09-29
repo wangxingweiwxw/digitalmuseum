@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "digitalmuseum",
+  "account_id": "8106635581af5c001f156a589fea132c",
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [{ "pattern": "museum.chipai.cc", "custom_domain": true }],
+  "main": "worker/index.mjs",
+  "compatibility_date": "2026-09-26",
+  "observability": { "enabled": true, "redact_query_string": true },
+  "secrets": { "required": ["ZHIHU_OAUTH_APP_KEY"] },
+  "keep_vars": true,
+  "build": { "command": "node scripts/build-cloudflare.mjs" },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/auth/*", "/zhihu-callback"],
+    "not_found_handling": "none"
+  },
+  "vars": {
+    "ZHIHU_OAUTH_APP_ID": "851",
+    "ZHIHU_OAUTH_REDIRECT_URI": "https://museum.chipai.cc/zhihu-callback"
+  },
+  "durable_objects": { "bindings": [{ "name": "AUTH_SESSIONS", "class_name": "MuseumAuthSession" }] },
+  "migrations": [{ "tag": "v1-auth", "new_sqlite_classes": ["MuseumAuthSession"] }],
+  "r2_buckets": [
+    { "binding": "EXHIBITS", "bucket_name": "digitalmuseum-exhibits" }
+  ]
+}

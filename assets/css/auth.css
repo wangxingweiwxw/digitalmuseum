@@ -1,0 +1,15 @@
+.zhihu-auth-nav { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.zhihu-auth-button { border: 1px solid #b5a58e; border-radius: 20px; background: #fffaf0; color: #51412b; padding: 8px 15px; font: inherit; cursor: pointer; }
+.zhihu-auth-button:hover { background: #efe4d1; }
+.zhihu-auth-button:focus-visible { outline: 3px solid #806642; outline-offset: 3px; }
+.zhihu-auth-button:disabled { opacity: .6; cursor: wait; }
+#zhihu-account { max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zhihu-auth-dialog { width: min(440px, calc(100% - 32px)); max-height: calc(100% - 32px); overflow: auto; margin: auto; box-sizing: border-box; border: 1px solid #c5b89f; border-radius: 16px; padding: 28px; color: #51412b; background: #fffbf2; box-shadow: 0 12px 48px #20160640; }
+.zhihu-auth-dialog::backdrop { background: #221b1499; }
+.zhihu-auth-dialog h2 { font-size: 22px; margin: 0 40px 18px 0; }
+.zhihu-auth-dialog p { line-height: 1.7; margin: 12px 0; }
+.zhihu-auth-close { position: absolute; top: 14px; right: 14px; border: 0; background: transparent; color: inherit; font-size: 26px; cursor: pointer; }
+#zhihu-auth-status { font-size: 14px; }
+#zhihu-avatar { width: 56px; height: 56px; border-radius: 50%; }
+#zhihu-contact { overflow-wrap: anywhere; font-size: 14px; }
+@media (max-width: 600px) { .zhihu-auth-button { padding: 7px 10px; font-size: 13px; } #zhihu-account { max-width: 100px; } }

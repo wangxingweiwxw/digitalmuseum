@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>绘本数字博物馆</title>
-  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/style.css?v=20260926-expanded">
   <link rel="icon" href="./assets/images/logo.jpg">
+  <link rel="stylesheet" href="./assets/css/auth.css?v=20260929">
 </head>
 <body>
   <div id="view-home">
@@ -15,6 +16,10 @@
           <img src="./assets/images/logo.jpg" alt="绘本数字博物馆">
           <span>绘本数字博物馆</span>
         </button>
+        <div class="zhihu-auth-nav">
+          <button type="button" class="zhihu-auth-button" id="zhihu-login">知乎登录</button>
+          <button type="button" class="zhihu-auth-button" id="zhihu-account" hidden></button>
+        </div>
       </div>
     </nav>
 
@@ -29,7 +34,7 @@
       <section class="container" id="museums">
         <div class="section-title">
           <h2>八座博物馆</h2>
-          <p>入口对应 wellplay.cc好玩绘本案例画廊中已发布的探索路径</p>
+          <p>每馆 1 页概览与 10 页展品、专题，沿树形目录走进文物的故事</p>
           <div class="divider"></div>
         </div>
         <div class="museum-grid" id="museum-grid"></div>
@@ -54,6 +59,7 @@
         <h1 id="exhibit-title">加载中…</h1>
       </div>
       <div class="exhibit-pager">
+        <span id="exhibit-progress" class="exhibit-progress" aria-live="polite"></span>
         <button type="button" id="exhibit-toc" class="exhibit-back" aria-expanded="false" aria-controls="exhibit-tree-pop">目录</button>
         <button type="button" id="exhibit-back" class="exhibit-back" hidden>上一页</button>
         <button type="button" id="exhibit-next" class="exhibit-back">下一页</button>
@@ -69,15 +75,32 @@
       </div>
       <p class="exhibit-hint" id="exhibit-hint">向左或向上滑动进入下一页，向右或向下滑动回到上一页。</p>
     </main>
-    <footer class="exhibit-zhihu" id="exhibit-zhihu" hidden aria-label="知乎讨论">
+    <footer class="exhibit-zhihu" id="exhibit-zhihu" hidden aria-label="展品简介与延伸阅读" tabindex="0">
       <div id="exhibit-zhihu-list"></div>
     </footer>
     <div class="exhibit-toast" id="exhibit-toast" hidden>此处尚未开放，请点击画面上的圆点</div>
   </div>
 
-  <script src="./assets/js/museum-data.js"></script>
-  <script src="./assets/js/story-tree.js"></script>
-  <script src="./assets/js/zhihu-topics.js"></script>
-  <script src="./assets/js/app.js"></script>
+  <dialog id="zhihu-auth-dialog" class="zhihu-auth-dialog" aria-labelledby="zhihu-auth-title">
+    <button type="button" id="zhihu-auth-close" class="zhihu-auth-close" aria-label="关闭">×</button>
+    <h2 id="zhihu-auth-title">使用知乎登录</h2>
+    <div id="zhihu-auth-intro">
+      <p>登录后显示你的知乎昵称与头像。你也可以不登录，直接浏览全部展馆。</p>
+      <p>将前往知乎确认授权。本应用已申请邮箱、手机和公开内容权限，实际授权以知乎页面为准；本网站仅使用基本资料建立登录状态，邮箱和手机仅保留脱敏值，不读取你的创作内容。</p>
+    </div>
+    <div id="zhihu-profile" hidden>
+      <img id="zhihu-avatar" alt="知乎头像" referrerpolicy="no-referrer" hidden>
+      <p id="zhihu-name"></p><p id="zhihu-headline"></p><p id="zhihu-contact"></p>
+      <p>退出仅结束本网站的登录会话。</p>
+    </div>
+    <p id="zhihu-auth-status" role="status" aria-live="polite"></p>
+    <button type="button" id="zhihu-authorize" class="zhihu-auth-button">前往知乎授权</button>
+    <button type="button" id="zhihu-logout" class="zhihu-auth-button" hidden>退出登录</button>
+  </dialog>
+  <script src="./assets/js/auth.js?v=20260929"></script>
+  <script src="./assets/js/museum-data.js?v=20260926-expanded"></script>
+  <script src="./assets/js/story-tree.js?v=20260926-expanded"></script>
+  <script src="./assets/js/zhihu-topics.js?v=20260926-expanded"></script>
+  <script src="./assets/js/app.js?v=20260926-expanded"></script>
 </body>
 </html>
