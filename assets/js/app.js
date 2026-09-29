@@ -311,7 +311,7 @@
         var items = topics[node.id] || [];
         var pickedItems = items.filter(function (item) {
             return safeZhihuUrl(item.url) && item.title;
-        }).slice(0, 2);
+        }).slice(0, 1);
         if (node.introduction) {
             var intro = document.createElement('p');
             intro.className = 'exhibit-introduction';
