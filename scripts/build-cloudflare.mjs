@@ -102,6 +102,7 @@ export async function build(root = ROOT, { refreshImages = false } = {}) {
   }
   await fs.mkdir(path.join(root, 'worker'), { recursive: true });
   await checkZhihuLinks(root);
+  await fs.writeFile(path.join(root, 'worker/library-catalog.json'), JSON.stringify(pack.museums.flatMap(m => m.nodes.map(n => n.id))));
   await fs.mkdir(path.join(root, '.cloudflare'), { recursive: true });
   await fs.writeFile(path.join(root, 'worker/exhibit-manifest.json'), JSON.stringify(routes));
   const result = { static_files: copied, r2_images: upload, static_bytes: copied.reduce((s, f) => s + f.bytes, 0), r2_bytes: upload.reduce((s, f) => s + f.bytes, 0) };

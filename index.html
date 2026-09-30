@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="./assets/css/style.css?v=20260929-transitions">
   <link rel="icon" href="./assets/images/logo.jpg">
   <link rel="stylesheet" href="./assets/css/auth.css?v=20260929">
+  <link rel="stylesheet" href="./assets/css/library.css?v=20260930-library">
 </head>
 <body>
   <div id="view-home">
@@ -28,6 +29,7 @@
         <div class="hero-simple-inner">
           <h1>绘本数字博物馆</h1>
           <p>点开每座馆，画面上的圆点是可以走进的展线。绘本化探索人文历史。</p>
+          <button type="button" class="zhihu-auth-button library-home" id="home-library">我的收藏与笔记</button>
         </div>
       </section>
 
@@ -84,17 +86,54 @@
       <p class="exhibit-hint" id="exhibit-hint">向左或向上滑动进入下一页，向右或向下滑动回到上一页。</p>
     </main>
     <footer class="exhibit-zhihu" id="exhibit-zhihu" hidden aria-label="展品简介与延伸阅读" tabindex="0">
+      <div class="library-tools">
+        <button type="button" id="exhibit-favorite" aria-pressed="false">☆ 收藏展品</button>
+        <button type="button" id="exhibit-note">写私人笔记</button>
+        <button type="button" id="exhibit-library">我的收藏与笔记</button>
+      </div>
+      <p class="library-inline-status" id="library-action-status" role="status"></p>
       <div id="exhibit-zhihu-list"></div>
     </footer>
     <div class="exhibit-toast" id="exhibit-toast" hidden>此处尚未开放，请点击画面上的圆点</div>
   </div>
 
+  <dialog id="library-dialog" class="zhihu-auth-dialog library-dialog" aria-labelledby="library-title">
+    <button type="button" id="library-close" class="zhihu-auth-close" aria-label="关闭收藏与笔记">×</button>
+    <h2 id="library-title">我的收藏与笔记</h2>
+    <p class="library-privacy">随知乎账号保存，仅你自己可见。</p>
+    <div class="library-tabs" aria-label="内容筛选">
+      <button type="button" id="library-favorites" aria-pressed="true">收藏展品</button>
+      <button type="button" id="library-notes" aria-pressed="false">私人笔记</button>
+    </div>
+    <p id="library-list-status" role="status"></p>
+    <button type="button" id="library-refresh" class="zhihu-auth-button">刷新列表</button>
+    <div id="library-list"></div>
+    <button type="button" id="library-login" class="zhihu-auth-button" hidden>重新登录</button>
+  </dialog>
+
+  <dialog id="note-dialog" class="zhihu-auth-dialog library-dialog" aria-labelledby="note-title">
+    <button type="button" id="note-close" class="zhihu-auth-close" aria-label="关闭笔记">×</button>
+    <h2 id="note-title">私人观展笔记</h2>
+    <p id="note-exhibit"></p>
+    <p class="library-privacy">仅你自己可见，不会发布到知乎。保存后可在其他设备继续编辑。</p>
+    <label for="note-text">我的观展感想</label>
+    <textarea id="note-text" maxlength="2000" rows="8" placeholder="记下打动你的细节、想继续探索的问题……" aria-describedby="note-count"></textarea>
+    <p id="note-count">0 / 2000</p>
+    <p id="note-status" role="status"></p>
+    <div class="note-actions">
+      <button type="button" id="note-save" class="zhihu-auth-button">保存笔记</button>
+      <button type="button" id="note-delete" class="zhihu-auth-button" hidden>删除笔记</button>
+      <button type="button" id="note-reload" class="zhihu-auth-button" hidden>重新载入已保存笔记</button>
+      <button type="button" id="note-login" class="zhihu-auth-button" hidden>重新登录</button>
+    </div>
+  </dialog>
+
   <dialog id="zhihu-auth-dialog" class="zhihu-auth-dialog" aria-labelledby="zhihu-auth-title">
     <button type="button" id="zhihu-auth-close" class="zhihu-auth-close" aria-label="关闭">×</button>
     <h2 id="zhihu-auth-title">使用知乎登录</h2>
     <div id="zhihu-auth-intro">
-      <p>登录后显示你的知乎昵称与头像。你也可以不登录，直接浏览全部展馆。</p>
-      <p>将前往知乎确认授权。本应用已申请邮箱、手机和公开内容权限，实际授权以知乎页面为准；本网站仅使用基本资料建立登录状态，邮箱和手机仅保留脱敏值，不读取你的创作内容。</p>
+      <p>登录后可收藏展品、保存私人观展笔记，并在不同设备间同步。你也可以不登录，直接浏览全部展馆。</p>
+      <p>将前往知乎确认授权。本应用已申请邮箱、手机和公开内容权限，实际授权以知乎页面为准；本网站使用基本资料建立登录状态，并将你在本站保存的收藏、笔记关联至账号。邮箱和手机仅保留脱敏值，不读取你的知乎创作内容。</p>
     </div>
     <div id="zhihu-profile" hidden>
       <img id="zhihu-avatar" alt="知乎头像" referrerpolicy="no-referrer" hidden>
@@ -105,10 +144,11 @@
     <button type="button" id="zhihu-authorize" class="zhihu-auth-button">前往知乎授权</button>
     <button type="button" id="zhihu-logout" class="zhihu-auth-button" hidden>退出登录</button>
   </dialog>
-  <script src="./assets/js/auth.js?v=20260929"></script>
+  <script src="./assets/js/auth.js?v=20260930-library"></script>
   <script src="./assets/js/museum-data.js?v=20260926-expanded"></script>
   <script src="./assets/js/story-tree.js?v=20260926-expanded"></script>
   <script src="./assets/js/zhihu-topics.js?v=20260930-unique-links"></script>
-  <script src="./assets/js/app.js?v=20260930-unique-links"></script>
+  <script src="./assets/js/app.js?v=20260930-library"></script>
+  <script src="./assets/js/library.js?v=20260930-library"></script>
 </body>
 </html>

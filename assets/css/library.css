@@ -1,0 +1,27 @@
+.library-home { margin-top: 22px; }
+.library-tools { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 5px 0 7px; }
+.library-tools button { border: 1px solid #756449; color: #ecddc2; background: #25221e; border-radius: 18px; padding: 6px 12px; font: inherit; font-size: .78rem; cursor: pointer; }
+.library-tools button[aria-pressed="true"] { background: #d4bd90; color: #282016; }
+.library-tools button:disabled { opacity: .55; cursor: wait; }
+.library-tools button:focus-visible { outline: 2px solid #e5c38c; outline-offset: 3px; }
+.library-inline-status { color: #ddc99f; font-size: .76rem; line-height: 1.5; }
+.library-inline-status:empty { display: none; }
+.library-dialog { width: min(600px, calc(100% - 24px)); }
+.library-dialog .library-privacy { color: #766c5d; font-size: .82rem; }
+.library-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.library-tabs button { padding: 8px 14px; border: 1px solid #c9bba3; border-radius: 20px; background: transparent; color: #51412b; font: inherit; cursor: pointer; }
+.library-tabs button[aria-pressed="true"] { background: #51412b; color: #fffbf2; }
+.library-item { padding: 16px 0; border-bottom: 1px solid #e4d9c6; }
+.library-item h3 { font-size: 1rem; line-height: 1.5; }
+.library-item p { margin: 6px 0; font-size: .82rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+.library-item .library-item-museum { color: #81745f; }
+.library-item button { margin: 6px 8px 0 0; }
+.library-dialog label { display: block; margin: 14px 0 8px; }
+#note-text { box-sizing: border-box; width: 100%; resize: vertical; min-height: 150px; max-height: 45dvh; padding: 12px; border: 1px solid #b9a98b; border-radius: 10px; font: inherit; font-size: 16px; line-height: 1.7; background: #fffefb; color: #372d1f; }
+#note-text:focus { outline: 2px solid #9b7e4d; outline-offset: 2px; }
+#note-count { text-align: right; font-size: .75rem; color: #81745f; margin: 4px 0; }
+#note-status, #library-list-status { font-size: .85rem; }
+.note-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+#note-save { background: #51412b; color: #fffaf0; }
+#note-delete { color: #9d3f32; }
+@media (max-width: 480px) { .library-dialog { padding: 22px 18px; } .library-tools { gap: 6px; } .library-tools button { padding: 6px 9px; } }

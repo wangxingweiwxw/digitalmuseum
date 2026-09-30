@@ -150,6 +150,8 @@
         viewHome.hidden = false;
         viewExhibit.hidden = true;
         exhibitState = null;
+        history.replaceState(null, '', location.pathname + location.search);
+        window.dispatchEvent(new CustomEvent('museum:page', { detail: null }));
         setTocOpen(false);
         window.scrollTo(0, 0);
     }
@@ -447,6 +449,8 @@
         renderTree(s, node);
         renderZhihu(node);
         loadExhibitImage(s, node, false);
+        history.replaceState(null, '', '#museum/' + encodeURIComponent(s.museum.id) + '/' + encodeURIComponent(node.id));
+        window.dispatchEvent(new CustomEvent('museum:page', { detail: { museumId: s.museum.id, nodeId: node.id } }));
         requestAnimationFrame(fitExhibitImage);
     }
 
@@ -492,6 +496,7 @@
         window.addEventListener('resize', fitExhibitImage);
         if (window.ResizeObserver) new ResizeObserver(fitExhibitImage).observe(surface);
         document.addEventListener('keydown', function (e) {
+            if (document.querySelector('dialog[open]')) return;
             if (!exhibitOpen() || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
             if (e.key === 'Escape') { setTocOpen(false); return; }
             if (e.target.closest('#exhibit-tree-pop, #exhibit-zhihu')) return;
@@ -653,6 +658,11 @@
         initExhibitControls();
         initNavScroll();
         initBackToTop();
+        window.MuseumNavigation = { open: openMuseum };
+        var route = location.hash.match(/^#museum\/([^/]+)\/([^/]+)$/);
+        if (route) {
+            try { openMuseum(decodeURIComponent(route[1]), decodeURIComponent(route[2])); } catch (err) {}
+        }
     }
 
     if (document.readyState === 'loading') {
