@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "node scripts/build-cloudflare.mjs",
     "test": "node --test tests/*.test.mjs",
@@ -14,5 +16,9 @@
     "deploy": "wrangler deploy",
     "deploy:r2": "node scripts/deploy-r2.mjs"
   },
-  "devDependencies": { "wrangler": "4.141.0", "miniflare": "5.20260925.0-alpha" }
+  "devDependencies": {
+    "wrangler": "4.141.0",
+    "miniflare": "5.20260925.0-alpha",
+    "esbuild": "0.28.1"
+  }
 }

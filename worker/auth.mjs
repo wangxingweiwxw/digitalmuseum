@@ -24,6 +24,14 @@ function config(env) {
   } catch { return null; }
 }
 
+export function authOrigin(env) { return config(env)?.origin || null; }
+export async function authenticatedUser(request, env) {
+  const sid = readCookie(request, SESSION_COOKIE);
+  if (!sid) return null;
+  const session = await store(env).get('session:' + await digest(sid));
+  return session?.user || null;
+}
+
 // Parsing uid directly from its JSON source avoids rounding 64-bit Zhihu identifiers.
 export function parseProviderJSON(text) {
   return JSON.parse(text, (key, value, context) => {

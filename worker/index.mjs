@@ -1,6 +1,8 @@
 import exhibits from './exhibit-manifest.json' with { type: 'json' };
 import { handleAuth } from './auth.mjs';
+import { handleLibrary } from './library.mjs';
 export { MuseumAuthSession } from './auth.mjs';
+export { MuseumLibrary } from './library.mjs';
 
 function notModified(request, headers) {
   const match = request.headers.get('if-none-match');
@@ -21,6 +23,8 @@ export default {
   async fetch(request, env, ctx) {
     const auth = await handleAuth(request, env);
     if (auth) return auth;
+    const personal = await handleLibrary(request, env);
+    if (personal) return personal;
     const url = new URL(request.url);
     let pathname;
     try { pathname = decodeURIComponent(url.pathname); }

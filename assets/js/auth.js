@@ -29,6 +29,7 @@
       avatar.hidden = !user.avatar;
       if (user.avatar) avatar.src = user.avatar; else avatar.removeAttribute('src');
     }
+    window.dispatchEvent(new CustomEvent('museum:auth', { detail: { user: user } }));
   }
   async function session() {
     try {
@@ -36,7 +37,13 @@
       if (!response.ok) throw new Error();
       render(await response.json());
     } catch { configured = false; }
+    return user;
   }
+  window.MuseumAuth = {
+    getUser: function () { return user; },
+    refresh: session,
+    login: function () { message(''); dialog.showModal(); }
+  };
   login.addEventListener('click', function () { message(''); dialog.showModal(); });
   account.addEventListener('click', function () { message(''); dialog.showModal(); });
   document.getElementById('zhihu-auth-close').addEventListener('click', function () { dialog.close(); });

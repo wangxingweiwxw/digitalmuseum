@@ -1,0 +1,32 @@
+{
+  "mock_accounts": true,
+  "views": [
+    {
+      "viewport": "desktop",
+      "login_prompt": true,
+      "favorite": true,
+      "unfavorite_preserves_note": true,
+      "note_save_delete": true,
+      "reload_persistence": true,
+      "error_preserves_draft": true,
+      "conflict": true,
+      "unsaved_confirmation": true,
+      "account_change_clears_private_ui": true,
+      "html_rendered_as_text": true
+    },
+    {
+      "viewport": "mobile",
+      "login_prompt": true,
+      "favorite": true,
+      "unfavorite_preserves_note": true,
+      "note_save_delete": true,
+      "reload_persistence": true,
+      "error_preserves_draft": true,
+      "conflict": true,
+      "unsaved_confirmation": true,
+      "account_change_clears_private_ui": true,
+      "html_rendered_as_text": true
+    }
+  ],
+  "script_errors": []
+}
